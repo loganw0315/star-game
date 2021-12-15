@@ -1,25 +1,18 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
 import PlayAgain from "./PlayAgain";
 import PlayNumber from "./PlayNumber";
 import StarsDisplay from "./StarsDisplay";
-
-
+import useGameState from "./useGameState";
+import utils from "./utils";
 
 const Game = (props) => {
-  const [stars, setStars] = useState(utils.random(1, 9));
-  const [availNums, setAvailNums] = useState(utils.range(1, 9));
-  const [candidateNums, setCadidateNums] = useState([]);
-  const [secondsLeft, setSecondsLeft] = useState(10);
-  
-  
-  useEffect(() => {
-    if(secondsLeft > 0 && availNums.length > 0){
-      const timerId = setTimeout(() => {
-        setSecondsLeft(secondsLeft - 1)
-      }, 1000);
-      return () => clearTimeout(timerId);
-    }
-  },);
+  const {
+    stars,
+    availNums,
+    candidateNums,
+    secondsLeft,
+    setGameState
+  } = useGameState();
 
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
   const gameStatus = availNums.length === 0
@@ -39,26 +32,17 @@ const Game = (props) => {
   };
 
   const onNumberClick = (number, currentStatus) => {
+    
     if(gameStatus !=='active' ||  currentStatus === 'used'){
       return;
     }
 
     const newCandidateNums = 
-      currentStatus === 'available'
-        ? candidateNums.concat(number)
-        : candidateNums.filter(cn => cn !== number);
-    
-
-    if(utils.sum(newCandidateNums) !== stars){
-      setCadidateNums(newCandidateNums);
-    } else {
-      const newAvailNums = availNums.filter(
-        n => !newCandidateNums.includes(n)
-      );
-      setStars(utils.randomSumIn(newAvailNums, 9))
-      setAvailNums(newAvailNums);
-      setCadidateNums([]);
-    }
+        currentStatus === 'available'
+          ? candidateNums.concat(number)
+          : candidateNums.filter(cn => cn !== number);
+      
+   setGameState(utils, newCandidateNums);
   };
 
   return (
@@ -93,34 +77,7 @@ const Game = (props) => {
 
 
 
-const utils = {
-  // Sum an array
-  sum: arr => arr.reduce((acc, curr) => acc + curr, 0),
 
-  // create an array of numbers between min and max (edges included)
-  range: (min, max) => Array.from({ length: max - min + 1 }, (_, i) => min + i),
-
-  // pick a random number between min and max (edges included)
-  random: (min, max) => min + Math.floor(Math.random() * (max - min + 1)),
-
-  // Given an array of numbers and a max...
-  // Pick a random sum (< max) from the set of all available sums in arr
-  randomSumIn: (arr, max) => {
-    const sets = [[]];
-    const sums = [];
-    for (let i = 0; i < arr.length; i++) {
-      for (let j = 0, len = sets.length; j < len; j++) {
-        const candidateSet = sets[j].concat(arr[i]);
-        const candidateSum = utils.sum(candidateSet);
-        if (candidateSum <= max) {
-          sets.push(candidateSet);
-          sums.push(candidateSum);
-        }
-      }
-    }
-    return sums[utils.random(0, sums.length - 1)];
-  },
-};
 
 // Color Theme
 const colors = {
