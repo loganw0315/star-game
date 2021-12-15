@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import StarMatch from './StarMatch';
+import StarMatch from './Game';
 
 import reportWebVitals from './reportWebVitals';
 
