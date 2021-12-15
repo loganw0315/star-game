@@ -1,8 +1,51 @@
 import React, {useState} from "react";
 import PlayNumber from "./PlayNumber";
+import StarsDisplay from "./StarsDisplay";
+
+
 
 const StarMatch = () => {
   const [stars, setStars] = useState(utils.random(1, 9));
+  const [availNums, setAvailNums] = useState(utils.range(1, 9));
+  const [candidateNums, setCadidateNums] = useState([]);
+
+  const candidatesAreWrong = utils.sum(candidateNums) > stars;
+
+  const numberStatus = number => {
+    if(!availNums.includes(number)) {
+      return 'used';
+    }
+
+    if(candidateNums.includes(number)){
+      return candidatesAreWrong ? 'wrong': 'candidate'
+    }
+
+    return 'available';
+  }
+
+  const onNumberClick = (number, currentStatus) => {
+    if(currentStatus === 'used'){
+      return;
+    }
+
+    const newCandidateNums = 
+      currentStatus === 'available'
+        ? candidateNums.concat(number)
+        : candidateNums.filter(cn => cn !== number);
+    
+
+    if(utils.sum(newCandidateNums) !== stars){
+      setCadidateNums(newCandidateNums);
+    } else {
+      const newAvailNums = availNums.filter(
+        n => !newCandidateNums.includes(n)
+      );
+      setStars(utils.randomSumIn(newAvailNums, 9))
+      setAvailNums(newAvailNums);
+      setCadidateNums([]);
+    }
+  }
+
   return (
     <div className="game">
       <div className="help">
@@ -10,13 +53,18 @@ const StarMatch = () => {
       </div>
       <div className="body">
         <div className="left">
-          {utils.range(1, stars).map(starId =>
-            <div key={starId} className="star" />
-            )}
+          <StarsDisplay stars={stars} utilRange={utils.range}/>
         </div>
         <div className="right">
           {utils.range(1, 9).map(number =>
-            <PlayNumber key={number} number={number}/> )}
+            <PlayNumber 
+              key={number} 
+              number={number} 
+              status={numberStatus(number)}
+              colors={colors}
+              onClick={onNumberClick}
+            /> 
+          )}
         </div>
       </div>
       <div className="timer">Time Remaining: 10</div>
@@ -24,15 +72,6 @@ const StarMatch = () => {
   );
 };
 
-// Color Theme
-const colors = {
-  available: 'lightgray',
-  used: 'lightgreen',
-  wrong: 'lightcoral',
-  candidate: 'deepskyblue',
-};
-
-// Math science
 const utils = {
   // Sum an array
   sum: arr => arr.reduce((acc, curr) => acc + curr, 0),
@@ -61,6 +100,16 @@ const utils = {
     return sums[utils.random(0, sums.length - 1)];
   },
 };
+
+// Color Theme
+const colors = {
+  available: 'lightgray',
+  used: 'lightgreen',
+  wrong: 'lightcoral',
+  candidate: 'deepskyblue',
+};
+
+// Math science
 
 
 export default StarMatch;
