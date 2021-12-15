@@ -7,7 +7,7 @@ const PlayAgain = (props) => {
             >
                 {props.gameStatus === 'lost' ? 'Game Over' : 'Nice'}
             </div>
-            <button onClick={props.onClick}>Play Again</button>
+            <button onClick={props.onClickHandler}>Play Again</button>
         </div>
      );
 }

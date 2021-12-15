@@ -1,4 +1,3 @@
-import React from "react";
 import PlayAgain from "./PlayAgain";
 import PlayNumber from "./PlayNumber";
 import StarsDisplay from "./StarsDisplay";
@@ -53,7 +52,7 @@ const Game = (props) => {
       <div className="body">
         <div className="left">
           {gameStatus !== 'active' ? (
-            <PlayAgain onClick={props.startNewGame} gameStatus={gameStatus}/>
+            <PlayAgain onClickHandler={props.startNewGame} gameStatus={gameStatus}/>
           ) : (
             <StarsDisplay stars={stars} utilRange={utils.range}/>
           )}
