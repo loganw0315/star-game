@@ -1,7 +1,13 @@
 
 const PlayNumber = (props) => {
     return ( 
-        <button  className="number" onClick={() => (console.log('Num', props.number))}>{props.number}</button>
+        <button  
+        className="number" 
+        style={{backgroundColor: props.colors[props.status]}}
+        onClick={() => props.onClick(props.number, props.status)}
+        >
+            {props.number}
+        </button>
      );
 }
  
