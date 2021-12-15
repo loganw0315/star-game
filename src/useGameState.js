@@ -1,11 +1,12 @@
 import {useEffect, useState} from 'react';
 import utils from './utils';
 
-function useGameState(newCandidateNums) {
+function useGameState() {
         const [stars, setStars] = useState(utils.random(1, 9));
         const [availNums, setAvailNums] = useState(utils.range(1, 9));
         const [candidateNums, setCadidateNums] = useState([]);
         const [secondsLeft, setSecondsLeft] = useState(10);
+        
         
         
         useEffect(() => {
@@ -18,9 +19,13 @@ function useGameState(newCandidateNums) {
         },);
 
        
-
-        const setGameState = () => {
-
+       
+        const setGameState = (number, currentStatus ) => {
+            const newCandidateNums = 
+            currentStatus === 'available'
+              ? candidateNums.concat(number)
+              : candidateNums.filter(cn => cn !== number);
+          
             if(utils.sum(newCandidateNums) !== stars){
                 setCadidateNums(newCandidateNums);
               } else {

@@ -5,6 +5,7 @@ import StarsDisplay from "./StarsDisplay";
 import useGameState from "./useGameState";
 import utils from "./utils";
 
+//Main component of the game, uses imported components to render the main game display and controls logic of win or loss game state
 const Game = (props) => {
   const {
     stars,
@@ -14,12 +15,15 @@ const Game = (props) => {
     setGameState
   } = useGameState();
 
+  //Checks if selected numbers are wrong
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
+  //Checks if game is won or lost
   const gameStatus = availNums.length === 0
     ? 'won'
     : secondsLeft === 0 ? 'lost' : 'active';
-
+  //Checks the states of individual numbers
   const numberStatus = number => {
+    //if the number is used 
     if(!availNums.includes(number)) {
       return 'used';
     }
@@ -37,12 +41,8 @@ const Game = (props) => {
       return;
     }
 
-    const newCandidateNums = 
-        currentStatus === 'available'
-          ? candidateNums.concat(number)
-          : candidateNums.filter(cn => cn !== number);
-      
-   setGameState(utils, newCandidateNums);
+  
+   setGameState(number, currentStatus);
   };
 
   return (
